@@ -28,6 +28,18 @@ function load (url, c, callback) {
     }
 }
 
+function get(params, callback) {
+    let xhr = new XMLHttpRequest ();
+    xhr.open('GET',params.url)
+    xhr.send()
+
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState==4){
+            callback(xhr.responseText)
+        }
+    }
+}
+
 function post(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('POST',params.url)
@@ -70,7 +82,7 @@ function onLoadAuth() {
             console.log(response)
 
             if (response.message == "Доступ разрешен") {
-                bearer_token = response.token
+                bearer_token = response.Data.token
                 load('/modules/chats.html', context, onLoadChats)
             }
         })
@@ -94,7 +106,7 @@ function onLoadReg(){
                 console.log(response)
 
                 if(response.message == "Регистрация успешна"){
-                    bearer_token = response.token
+                    bearer_token = response.Data.token
                     
                 }
                 else{
@@ -105,6 +117,17 @@ function onLoadReg(){
 }
 
 function onLoadChats() {
+    get({url: `${host}/chats/`}, function(response){
+        response = JSON.parse(response)
+        console.log(response)
+
+        let chats = select('.chats-list')
+        for(i=0; i<response.length; i++) {
+            let chat = document.createElement('.chat-item')
+
+            chats.append(chat)
+        }
+    })
     select('.logout').addEventListener('click', function(){
         logout({url: `${host}/auth/`}, function(response){
             response = JSON.parse(response)
@@ -118,8 +141,30 @@ function onLoadChats() {
     select('.chat-placeholder').addEventListener('click', function(){
         let el1 = select('.text')
         let el2 = select('input[name="search"]')
-        el1.style.display = el1.style.display === 'block' ? 'none' : 'block'
-        el2.style.display = el2.style.display === 'none' ? 'block' : 'none'
+        let el3 = select('.start-search')
+        el1.style.display = el1.style.display === 'none' ? 'none' : 'none'
+        el2.style.display = el2.style.display === 'block' ? 'block' : 'block'
+        el3.style.display = el3.style.display === 'block' ? 'block' : 'block'
     })
-    select('.chat-item').addEventListener('click')
+    select('.chat-item').addEventListener('click', function(){
+        let el1 = select('.placeholder-text')
+        let el2 = select('.message-area')
+        let el3 = select('.new-message-mark')
+        let el4 = select('.user-message')
+        let el5 = select('.companion-message')
+        el1.style.display = el1.style.display === 'none' ? 'block' : 'none'
+        el2.style.display = el2.style.display === 'flex' ? 'none' : 'flex'
+        el3.style.display = 'none'
+        el4.style.display = el4.style.display === 'block' ? 'none' : 'block'
+        el5.style.display = el5.style.display === 'block' ? 'none' : 'block'
+    })
+    select('.start-search').addEventListener('click', function(){
+        let search_user = new FormData
+        search_user.append('email', select('input[name="search"]').value)
+
+        post({url: `${host}/chats/`, data: search_user}, function(response){
+            response = JSON.parse(response)
+            console.log(response)
+        })
+    })
 }
