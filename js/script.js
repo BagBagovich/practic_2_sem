@@ -52,6 +52,18 @@ function post(params, callback) {
     }
 }
 
+function login (params, callback) {
+    let xhr = new XMLHttpRequest ();
+    xhr.open('POST',params.url)
+    xhr.send(params.data)
+
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState==4){
+            callback(xhr.responseText)
+        }
+    }
+}
+
 function logout(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('DELETE',params.url)
@@ -66,7 +78,7 @@ function logout(params, callback) {
 
 // #endregion
 
-load('/modules/chats.html', context, onLoadChats)
+load('/modules/authorization.html', context, onLoadAuth)
 
 function onLoadAuth() {
     select('.go-register').addEventListener('click', function(){
@@ -77,14 +89,16 @@ function onLoadAuth() {
         authData.append('email', select('input[name="email"]').value)
         authData.append('pass', select('input[name="pass"]').value)
 
-        post({url: `${host}/auth/`, data: authData}, function(response){
-            response = JSON.parse(response)
+        login({url: `${host}/auth/`, data: authData}, function(response){
+           response = JSON.parse(response)
             console.log(response)
 
-            if (response.message == "Доступ разрешен") {
-                bearer_token = response.Data.token
-                load('/modules/chats.html', context, onLoadChats)
-            }
+           if(response.status == 200) {
+            bearer_token = response.Data.token
+            load('/modules/chats.html', context, onLoadChats)
+           } else {
+            select('.callback').innerHTML = response.message
+           }
         })
     })
 }
@@ -165,6 +179,7 @@ function onLoadChats() {
         post({url: `${host}/chats/`, data: search_user}, function(response){
             response = JSON.parse(response)
             console.log(response)
+
         })
     })
 }
