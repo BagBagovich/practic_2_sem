@@ -78,7 +78,7 @@ function logout(params, callback) {
 
 // #endregion
 
-load('/modules/authorization.html', context, onLoadAuth)
+load('/modules/chats.html', context, onLoadChats)
 
 function onLoadAuth() {
     select('.go-register').addEventListener('click', function(){
@@ -142,6 +142,26 @@ function onLoadChats() {
             chats.append(chat)
         }
     })
+    select('.menu-btn').addEventListener('click', function(){
+        let el = select('.menu')
+        el.style.display = 'block'
+    })
+    select('.inmenu-btn').addEventListener('click', function(){
+        let el = select('.menu')
+        el.style.display = 'none'
+    })
+    select('.search-profile').addEventListener('click', function(){
+        let el = select('.search-bar')
+        el.style.display = el.style.display === 'flex' ? 'none' : 'flex'
+    })
+    select('.delete-profile').addEventListener('click', function(){
+        let el = select('.delete-confirm')
+        el.style.display = el.style.display === 'block' ? 'none' : 'block'
+    })
+    select('.deny').addEventListener('click', function(){
+        let el = select('.delete-confirm')
+        el.style.display ='none' 
+    })
     select('.logout').addEventListener('click', function(){
         logout({url: `${host}/auth/`}, function(response){
             response = JSON.parse(response)
@@ -182,4 +202,5 @@ function onLoadChats() {
 
         })
     })
+    
 }

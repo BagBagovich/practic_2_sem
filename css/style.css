@@ -61,14 +61,141 @@ body {
 .chats-block{
     background-color: antiquewhite;
     & .header{
+        position: relative;
         height: 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         background-color: #8db76189;
+        & .menu-btn {
+            text-align: center;
+            align-content: start;
+            width: 35px;
+            height: 35px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-left: 30px;
+            border-radius: 50%;
+            transition: background .1s linear;
+            &:hover {
+                background-color: #d6d4d4;
+                cursor: pointer;
+            }
+        }
+        & .menu {
+            border-radius: 10px;
+            display: block;
+            padding: 5px 0px;
+            z-index: 1;
+            top: 1px;
+            left: 35px;
+            position: absolute;
+            background-color: #c8ed77;
+            & .inmenu-btn{
+                text-align: center;
+                width: 20px;
+                font-size: 26px;
+                font-weight: 700;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+            & .search-profile, .edit-profile {
+                position: relative;
+                padding: 3px 5px;
+                font-size: 18px;
+                transition: background .1s linear, color .1s linear;
+                &:hover {
+                    background-color: #1cb338;
+                    color: #fff;
+                    cursor: pointer;
+                }
+            }
+            & .search-bar {
+                border-radius: 10px;
+                padding: 5px;
+                top: 40px;
+                left: 300px;
+                position: absolute;
+                display: none;
+                background-color: #d0fa82;
+                & input {
+                    padding: 5px;
+                    font-size: 16px;
+                    border: 0;
+                    border-radius: 10px;
+                }
+                & .search-btn {
+                    border-radius: 50%;
+                    margin-top: 3px;
+                    margin-left: 10px;
+                    display: block;
+                    background-color: #2d8bd7;
+                    width: 23px;
+                    height: 23px;
+                    transition: background .1s linear;
+                    &:hover {
+                        background-color: #1b6caf;
+                        cursor: pointer;
+                    }
+                }
+            }
+            & .delete-profile {
+                position: relative;
+                padding: 3px 5px;
+                margin-bottom: 4px;
+                font-size: 18px;
+                color: #f03131;
+                transition: background .1s linear, color .1s linear;
+                &:hover {
+                    background-color: #f03131;
+                    color: #fff;
+                    cursor: pointer;
+                }
+            }
+            & .delete-confirm {
+                padding: 10px;
+                border-radius: 10px;
+                display: none;
+                position: absolute;
+                width: 280px;
+                top: 100px;
+                left: 300px;
+                background-color: #97b55f;
+            }
+            & .btns {
+                padding: 5px 0px;
+                display: flex;
+                justify-content: space-between;
+                & .confirm, .deny {
+                    width: 45%;
+                    font-size: 18px;
+                    border: 0;
+                    padding: 5px;
+                    border-radius: 10px;
+                    transition: background .1s linear, color .1s linear;
+                }
+                & .confirm {
+                    background-color: #f03131;
+                    &:hover {
+                        cursor: pointer;
+                        background-color: #b31c1c;
+                        color: #fff;
+                    }
+                }
+                & .deny {
+                    background-color: #1cb338;
+                    &:hover {
+                        cursor: pointer;
+                        background-color: #167d29;
+                        color: #fff;
+                    }
+                }
+            }
+        }
         & .logo {
             font-size: 18px;
-            text-align: right;
+            text-align: center;
             width: 50%;
         }
         & .logout{
@@ -100,7 +227,6 @@ body {
             border-bottom: 2px solid #e6e6e6;
             transition: color .1s linear, background .1s linear;
             & .logo {
-                z-index: 1;
                 text-align: center;
                 align-content: center;
                 border-radius: 50%;
@@ -234,6 +360,7 @@ body {
             background-color: #fff;
             margin-left: 20px;
             margin-top: 25px;
+            margin-bottom: 15px;
             border-radius: 10px;
             & input {
                 margin-top: 10px;
