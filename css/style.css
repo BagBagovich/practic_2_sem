@@ -84,7 +84,7 @@ body {
         }
         & .menu {
             border-radius: 10px;
-            display: block;
+            display: none;
             padding: 5px 0px;
             z-index: 1;
             top: 1px;

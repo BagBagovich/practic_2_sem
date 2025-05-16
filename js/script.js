@@ -31,7 +31,7 @@ function load (url, c, callback) {
 function get(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('GET',params.url)
-    xhr.send()
+    xhr.send(bearer_token)
 
     xhr.onreadystatechange = function() {
         if(xhr.readyState==4){
@@ -59,7 +59,7 @@ function login (params, callback) {
 
     xhr.onreadystatechange = function() {
         if(xhr.readyState==4){
-            callback(xhr.responseText)
+            callback(xhr)
         }
     }
 }
@@ -78,7 +78,7 @@ function logout(params, callback) {
 
 // #endregion
 
-load('/modules/chats.html', context, onLoadChats)
+load('/modules/authorization.html', context, onLoadAuth)
 
 function onLoadAuth() {
     select('.go-register').addEventListener('click', function(){
@@ -89,15 +89,16 @@ function onLoadAuth() {
         authData.append('email', select('input[name="email"]').value)
         authData.append('pass', select('input[name="pass"]').value)
 
-        login({url: `${host}/auth/`, data: authData}, function(response){
-           response = JSON.parse(response)
-            console.log(response)
+        login({url: `${host}/auth/`, data: authData}, function(xhr){
+            console.log(xhr)
 
-           if(response.status == 200) {
-            bearer_token = response.Data.token
+           if(xhr.status == 200) {
+            
+            responseText = JSON.parse(xhr.responseText)
+            bearer_token = responseText.Data.token
             load('/modules/chats.html', context, onLoadChats)
            } else {
-            select('.callback').innerHTML = response.message
+            select('.callback').innerHTML = xhr.statusText
            }
         })
     })
@@ -158,6 +159,9 @@ function onLoadChats() {
         let el = select('.delete-confirm')
         el.style.display = el.style.display === 'block' ? 'none' : 'block'
     })
+    select('.confirm').addEventListener('click', function(){
+
+    })
     select('.deny').addEventListener('click', function(){
         let el = select('.delete-confirm')
         el.style.display ='none' 
@@ -176,7 +180,7 @@ function onLoadChats() {
         let el1 = select('.text')
         let el2 = select('input[name="search"]')
         let el3 = select('.start-search')
-        el1.style.display = el1.style.display === 'none' ? 'none' : 'none'
+        el1.style.display = el1.style.display = 'none' ? 'none' : 'none'
         el2.style.display = el2.style.display === 'block' ? 'block' : 'block'
         el3.style.display = el3.style.display === 'block' ? 'block' : 'block'
     })
