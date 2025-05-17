@@ -143,6 +143,7 @@ function onLoadChats() {
             chats.append(chat)
         }
     })
+    // #region Кнопки меню
     select('.menu-btn').addEventListener('click', function(){
         let el = select('.menu')
         el.style.display = 'block'
@@ -166,6 +167,7 @@ function onLoadChats() {
         let el = select('.delete-confirm')
         el.style.display ='none' 
     })
+    // #endregion
     select('.logout').addEventListener('click', function(){
         logout({url: `${host}/auth/`}, function(response){
             response = JSON.parse(response)
@@ -176,6 +178,7 @@ function onLoadChats() {
             select('.callback').innerHTML = 'Выход из приложения...'
         })
     })
+    // #region Панель чатов
     select('.chat-placeholder').addEventListener('click', function(){
         let el1 = select('.text')
         let el2 = select('input[name="search"]')
@@ -208,3 +211,4 @@ function onLoadChats() {
     })
     
 }
+// #endregion
