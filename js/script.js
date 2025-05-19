@@ -31,8 +31,8 @@ function load (url, c, callback) {
 function get(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('GET',params.url)
-    xhr.send(bearer_token)
-
+    xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token );
+    xhr.send()    
     xhr.onreadystatechange = function() {
         if(xhr.readyState==4){
             callback(xhr.responseText)
@@ -43,6 +43,7 @@ function get(params, callback) {
 function post(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('POST',params.url)
+    xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token );
     xhr.send(params.data)
 
     xhr.onreadystatechange = function() {
@@ -64,9 +65,22 @@ function login (params, callback) {
     }
 }
 
+function register(params, callback){
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', params.url)
+    xhr.send(params.data)
+    
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4) {
+            callback(xhr)
+        }
+    }
+}
+
 function logout(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('DELETE',params.url)
+    xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token );
     xhr.send()
 
     xhr.onreadystatechange = function() {
@@ -80,6 +94,7 @@ function logout(params, callback) {
 
 load('/modules/authorization.html', context, onLoadAuth)
 
+// #region Авторизация
 function onLoadAuth() {
     select('.go-register').addEventListener('click', function(){
         load('/modules/registration.html', context, onLoadReg)
@@ -90,12 +105,14 @@ function onLoadAuth() {
         authData.append('pass', select('input[name="pass"]').value)
 
         login({url: `${host}/auth/`, data: authData}, function(xhr){
-            console.log(xhr)
+            // console.log(xhr)
 
            if(xhr.status == 200) {
-            
             responseText = JSON.parse(xhr.responseText)
+            // console.log(responseText)
             bearer_token = responseText.Data.token
+            // console.log(bearer_token);
+            
             load('/modules/chats.html', context, onLoadChats)
            } else {
             select('.callback').innerHTML = xhr.statusText
@@ -103,7 +120,9 @@ function onLoadAuth() {
         })
     })
 }
+// #endregion
 
+// #region Регистрация
 function onLoadReg(){
     select('.go-auth').addEventListener('click', function(){
         load('/modules/authorization.html', context, onLoadAuth)
@@ -116,33 +135,58 @@ function onLoadReg(){
             regData.append('name', select('input[name="first-name"]').value)
             regData.append('otch', select('input[name="fam-name"]').value)
 
-            post({url: `${host}/user/`, data:regData}, function(response){
-                response = JSON.parse(response)
-                console.log(response)
+            register({url: `${host}/user/`, data:regData}, function(xhr){
+                console.log(xhr)
 
-                if(response.message == "Регистрация успешна"){
+                if(xhr.status == 200){
+                    let response = JSON.parse(xhr.responseText)
+                    console.log(response)
                     bearer_token = response.Data.token
+                    load('/modules/chats.html', context, onLoadChats)
                     
                 }
                 else{
-                    select('.callback').innerHTML = response.message
+                    select('.callback').innerHTML = xhr.statusText
                 }
             })
     })
 }
+// #endregion
 
 function onLoadChats() {
+    // #region Получение чатов
     get({url: `${host}/chats/`}, function(response){
         response = JSON.parse(response)
         console.log(response)
 
         let chats = select('.chats-list')
         for(i=0; i<response.length; i++) {
-            let chat = document.createElement('.chat-item')
+            let element = response[i]
+            let chat = document.createElement('div')
+            chat.classList.add('chat-item')
 
+            let chat_photo = document.createElement('div')
+            chat_photo.classList.add('chat-photo')
+            chat_photo.style.backgroundImage = element.companion_photo_link
+            chat_photo.style.backgroundColor = 'none'
+            chat.append(chat_photo)
+            
+            let chat_text = document.createElement('div')
+            chat_text.classList.add('chat-text')
+            chat.append(chat_text)
+
+            let chat_name = document.createElement('div')
+            chat_name.classList.add('chat-name')
+            chat_name.textContent = element.companion_name + ' ' + element.companion_fam
+            chat_text.append(chat_name)
+
+            
+            
             chats.append(chat)
         }
     })
+    // #endregion
+
     // #region Кнопки меню
     select('.menu-btn').addEventListener('click', function(){
         let el = select('.menu')
@@ -161,13 +205,23 @@ function onLoadChats() {
         el.style.display = el.style.display === 'block' ? 'none' : 'block'
     })
     select('.confirm').addEventListener('click', function(){
+        let xhr = new XMLHttpRequest()
+        xhr.open('DELETE', `${host}/user/`)
+        xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token )
+        xhr.send()
 
+         xhr.onreadystatechange = function() {
+            if(xhr.readyState==4){
+                load('/modules/authorization.html', context, onLoadAuth)
+        }
+    }
     })
     select('.deny').addEventListener('click', function(){
         let el = select('.delete-confirm')
         el.style.display ='none' 
     })
     // #endregion
+
     select('.logout').addEventListener('click', function(){
         logout({url: `${host}/auth/`}, function(response){
             response = JSON.parse(response)
@@ -178,6 +232,7 @@ function onLoadChats() {
             select('.callback').innerHTML = 'Выход из приложения...'
         })
     })
+
     // #region Панель чатов
     select('.chat-placeholder').addEventListener('click', function(){
         let el1 = select('.text')

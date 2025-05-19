@@ -82,6 +82,7 @@ body {
                 cursor: pointer;
             }
         }
+        /* Меню заголовка */
         & .menu {
             border-radius: 10px;
             display: none;
@@ -193,6 +194,7 @@ body {
                 }
             }
         }
+        /* Конец меню */
         & .logo {
             font-size: 18px;
             text-align: center;
@@ -211,9 +213,11 @@ body {
             }
         }
     }
+    /* Конец заголовка */
     & .workspace{
         display: flex;
     }
+    /* Список чатов */
     & .chats-list {
         display: block;
         background-color: #fff;
@@ -275,6 +279,7 @@ body {
                 cursor: pointer;
             }    
         }
+        /* Кнопка чата */
         & .chat-item {
             display: flex;
             justify-content: space-between;
@@ -335,7 +340,11 @@ body {
                 }
             }
         }
+        /* Конец кнопки */
     }
+    /* Конец списка */
+
+    /* Окно чата */
     & .chat-window {
         width: 70%;
         height: calc(100vh - 40px);
@@ -406,3 +415,4 @@ body {
         }
     }
 }
+/* КОНЕЦ */
