@@ -110,6 +110,7 @@ function onLoadAuth() {
            if(xhr.status == 200) {
             responseText = JSON.parse(xhr.responseText)
             // console.log(responseText)
+            user_email = responseText.Data.email
             bearer_token = responseText.Data.token
             // console.log(bearer_token);
             
@@ -179,9 +180,8 @@ function onLoadChats() {
             chat_name.classList.add('chat-name')
             chat_name.textContent = element.companion_name + ' ' + element.companion_fam
             chat_text.append(chat_name)
+            
 
-            
-            
             chats.append(chat)
         }
     })
@@ -264,6 +264,5 @@ function onLoadChats() {
 
         })
     })
-    
+    // #endregion
 }
-// #endregion
