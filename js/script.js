@@ -6,6 +6,7 @@ const context = select('.content')
 // #region Переменные
 let bearer_token = ''
 let user_email = ''
+let user_id = ''
 // #endregion
 
 // #region Функции-комбайны
@@ -110,6 +111,7 @@ function onLoadAuth() {
            if(xhr.status == 200) {
             responseText = JSON.parse(xhr.responseText)
             // console.log(responseText)
+            user_id = responseText.Data.id
             user_email = responseText.Data.email
             bearer_token = responseText.Data.token
             // console.log(bearer_token);
@@ -181,8 +183,10 @@ function onLoadChats() {
             chat_name.textContent = element.companion_name + ' ' + element.companion_fam
             chat_text.append(chat_name)
             
-
+            getMessages(element.chat_id)
+            
             chats.append(chat)
+            
         }
     })
     // #endregion
@@ -264,5 +268,36 @@ function onLoadChats() {
 
         })
     })
+    // #endregion
+
+    // #region Получение сообщений
+    function getMessages(chat_id) {
+        let xhr = new XMLHttpRequest()
+        xhr.open('GET', `${host}/messages/?chat_id=${chat_id}`)
+        xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token )
+        xhr.send()
+
+        xhr.onreadystatechange = function(response){
+            response = JSON.parse(response)
+            console.log(response)
+
+            let chat_window = select('.chat-window')
+            for(i=0; i<response.length; i++) {
+                let element = response[i]
+
+                if(element.sender_id = user_id) {
+                    let user_msg = document.createElement('div')
+                    user_msg.classList.add('user-message')
+                    user_msg.textContent = element.text
+                    chat_window.append(user_msg)
+                } else {
+                    let companion_msg = document.createElement('div')
+                    companion_msg.classList.add('companion-message')
+                    companion_msg.textContent = element.text
+                    chat_window.appemd(companion_msg)
+                }
+            }
+        }
+    }
     // #endregion
 }
