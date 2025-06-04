@@ -32,7 +32,7 @@ function load (url, c, callback) {
 function get(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('GET',params.url)
-    xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token );
+    xhr.setRequestHeader("Authorization", "Bearer " + bearer_token );
     xhr.send()    
     xhr.onreadystatechange = function() {
         if(xhr.readyState==4){
@@ -44,7 +44,7 @@ function get(params, callback) {
 function post(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('POST',params.url)
-    xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token );
+    xhr.setRequestHeader("Authorization", "Bearer " + bearer_token );
     xhr.send(params.data)
 
     xhr.onreadystatechange = function() {
@@ -81,7 +81,7 @@ function register(params, callback){
 function logout(params, callback) {
     let xhr = new XMLHttpRequest ();
     xhr.open('DELETE',params.url)
-    xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token );
+    xhr.setRequestHeader("Authorization", "Bearer " + bearer_token );
     xhr.send()
 
     xhr.onreadystatechange = function() {
@@ -184,6 +184,18 @@ function onLoadChats() {
             chat_text.append(chat_name)
             
             getMessages(element.chat_id)
+
+            chat.addEventListener('click',function(){
+                let el1 = select('.placeholder-text')
+                let el2 = select('.message-area')
+                let el3 = select('.new-message-mark')
+                let el4 = select('.user-message')
+                let el5 = select('.companion-message')
+                el1.style.display = el1.style.display === 'none' ? 'block' : 'none'
+                el2.style.display = el2.style.display === 'flex' ? 'none' : 'flex'
+                el4.style.display = el4.style.display === 'block' ? 'none' : 'block'
+                el5.style.display = el5.style.display === 'block' ? 'none' : 'block'
+            })
             
             chats.append(chat)
             
@@ -249,12 +261,10 @@ function onLoadChats() {
     select('.chat-item').addEventListener('click', function(){
         let el1 = select('.placeholder-text')
         let el2 = select('.message-area')
-        let el3 = select('.new-message-mark')
         let el4 = select('.user-message')
         let el5 = select('.companion-message')
         el1.style.display = el1.style.display === 'none' ? 'block' : 'none'
         el2.style.display = el2.style.display === 'flex' ? 'none' : 'flex'
-        el3.style.display = 'none'
         el4.style.display = el4.style.display === 'block' ? 'none' : 'block'
         el5.style.display = el5.style.display === 'block' ? 'none' : 'block'
     })
@@ -268,33 +278,54 @@ function onLoadChats() {
 
         })
     })
+    select('.send-btn').addEventListener('click', function(){
+        let msg = new FormData
+        msg.append('chat_id', chat_id)
+        msg.append('text',select('input[name="message"]').value)
+
+        post({url: `${host}/chats/&chat_id=${chat_id}`, data: msg}, function(response){
+            response = JSON.parse(response)
+            console.log(response)
+
+            let chat_window = select('chat-window')
+            
+            let message_area = select('.message-area')
+            let new_msg = document.createElement('div')
+            new_msg.classList.add('user-message')
+            new_msg.textContent = msg.text
+            chat_window.insertBefore(new_msg, message_area)
+        })
+    })
     // #endregion
 
     // #region Получение сообщений
     function getMessages(chat_id) {
         let xhr = new XMLHttpRequest()
         xhr.open('GET', `${host}/messages/?chat_id=${chat_id}`)
-        xhr.setRequestHeader( "Authorization", "Bearer " + bearer_token )
+        xhr.setRequestHeader("Authorization", "Bearer " + bearer_token)
         xhr.send()
 
         xhr.onreadystatechange = function(response){
-            response = JSON.parse(response)
-            console.log(response)
+            if (xhr.readyState == 4) {
+                response = JSON.parse(this.responseText)
+                console.log(response)
 
-            let chat_window = select('.chat-window')
-            for(i=0; i<response.length; i++) {
-                let element = response[i]
+                let chat_window = select('.chat-window')
+                let message_area = select('.message-area')
+                for(i=0; i<response.length; i++) {
+                    let element = response[i]
 
-                if(element.sender_id = user_id) {
-                    let user_msg = document.createElement('div')
-                    user_msg.classList.add('user-message')
-                    user_msg.textContent = element.text
-                    chat_window.append(user_msg)
-                } else {
-                    let companion_msg = document.createElement('div')
-                    companion_msg.classList.add('companion-message')
-                    companion_msg.textContent = element.text
-                    chat_window.appemd(companion_msg)
+                    if(element.sender_id = user_id) {
+                        let user_msg = document.createElement('div')
+                        user_msg.classList.add('user-message')
+                        user_msg.textContent = element.text
+                        chat_window.insertBefore(user_msg, message_area)
+                    } else {
+                        let companion_msg = document.createElement('div')
+                        companion_msg.classList.add('companion-message')
+                        companion_msg.textContent = element.text
+                        chat_window.insertBefore(companion_msg, message_area)
+                    }
                 }
             }
         }

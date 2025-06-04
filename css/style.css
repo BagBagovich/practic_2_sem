@@ -390,6 +390,8 @@ body {
                 margin-right: 20px;
                 margin-top: 10px;
                 border-radius: 50%;
+                justify-content: center;
+                text-align: center;
                 &:hover {
                     cursor: pointer;
                     background-color: #8db761c2;
