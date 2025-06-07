@@ -360,6 +360,11 @@ body {
             background-color: #f7f7f7;
             border-radius: 10px;
         }
+        & .new-message-area {
+            width: 100%;
+            height: calc(100%-100px);
+            display: none;
+        }
         & .message-area {
             display: none;
             justify-content: space-between;
