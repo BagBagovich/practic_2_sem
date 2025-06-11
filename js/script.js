@@ -188,6 +188,7 @@ function onLoadChats() {
             getMessages(element.chat_id)
 
             chat.addEventListener('click', function () {
+                getMessages(element.chat_id)
                 chat_id = element.chat_id
                 let placeholder_text = select('.placeholder-text')
                 let message_area = select('.message-area')
