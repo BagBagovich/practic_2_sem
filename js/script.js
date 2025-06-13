@@ -7,7 +7,6 @@ const context = select('.content')
 let bearer_token = ''
 let user_email = ''
 let user_id = ''
-let chat_id = ''
 // #endregion
 
 // #region Функции-комбайны
@@ -185,22 +184,20 @@ function onLoadChats() {
             chat_name.textContent = element.companion_name + ' ' + element.companion_fam
             chat_text.append(chat_name)
 
-            getMessages(element.chat_id)
-
             chat.addEventListener('click', function () {
-                getMessages(element.chat_id)
                 chat_id = element.chat_id
                 let placeholder_text = select('.placeholder-text')
                 let message_area = select('.message-area')
                 let new_message_area = select('.new-message-area')
-                let user_msg = select('.user-message')
+                // let user_msg = select('.user-message')
                 // let companion_msg = select('.companion-message')
                 placeholder_text.style.display = placeholder_text.style.display === 'none' ? 'block' : 'none'
                 message_area.style.display = message_area.style.display === 'flex' ? 'none' : 'flex'
                 new_message_area.style.display = new_message_area.style.display === 'block' ? 'none' : 'block'
-                user_msg.style.display = user_msg.style.display === 'block' ? 'none' : 'block'
+                // user_msg.style.display = user_msg.style.display === 'block' ? 'none' : 'block'
                 // companion_msg.style.display = companion_msg.style.display === 'block' ? 'none' : 'block'
             })
+            getMessages(element.chat_id)
 
             chats.append(chat)
 
@@ -288,6 +285,7 @@ function onLoadChats() {
             new_msg.classList.add('user-message')
             new_msg.textContent = msg.text
             message_area.append(new_msg)
+            select('input[name="message"]').textContent = ''
 
 
         })

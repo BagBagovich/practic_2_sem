@@ -409,7 +409,7 @@ body {
             padding: 5px;
             border-radius: 10px;
             margin: 15px 0px;
-            display: none;
+            
             
         }
         & .user-message {
@@ -422,4 +422,5 @@ body {
         }
     }
 }
+
 /* КОНЕЦ */
