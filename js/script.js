@@ -7,6 +7,7 @@ const context = select('.content')
 let bearer_token = ''
 let user_email = ''
 let user_id = ''
+let auth_time = ''
 // #endregion
 
 // #region Функции-комбайны
@@ -115,6 +116,8 @@ function onLoadAuth() {
                 user_id = responseText.Data.id
                 user_email = responseText.Data.email
                 bearer_token = responseText.Data.token
+                auth_time = responseText.Data.last_request
+
                 // console.log(bearer_token);
 
                 load('/modules/chats.html', context, onLoadChats)
@@ -140,7 +143,7 @@ function onLoadReg() {
         regData.append('otch', select('input[name="fam-name"]').value)
 
         register({ url: `${host}/user/`, data: regData }, function (xhr) {
-            console.log(xhr)
+            // console.log(xhr)
 
             if (xhr.status == 200) {
                 let response = JSON.parse(xhr.responseText)
@@ -183,21 +186,18 @@ function onLoadChats() {
             chat_name.classList.add('chat-name')
             chat_name.textContent = element.companion_name + ' ' + element.companion_fam
             chat_text.append(chat_name)
+            
 
             chat.addEventListener('click', function () {
                 chat_id = element.chat_id
+                getMessages(chat_id)
                 let placeholder_text = select('.placeholder-text')
                 let message_area = select('.message-area')
                 let new_message_area = select('.new-message-area')
-                // let user_msg = select('.user-message')
-                // let companion_msg = select('.companion-message')
-                placeholder_text.style.display = placeholder_text.style.display === 'none' ? 'block' : 'none'
-                message_area.style.display = message_area.style.display === 'flex' ? 'none' : 'flex'
-                new_message_area.style.display = new_message_area.style.display === 'block' ? 'none' : 'block'
-                // user_msg.style.display = user_msg.style.display === 'block' ? 'none' : 'block'
-                // companion_msg.style.display = companion_msg.style.display === 'block' ? 'none' : 'block'
+                placeholder_text.style.display = placeholder_text.style.display === 'none' ? 'none' : 'none'
+                message_area.style.display = message_area.style.display === 'flex' ? 'flex' : 'flex'
+                new_message_area.style.display = new_message_area.style.display === 'block' ? 'block' : 'block'
             })
-            getMessages(element.chat_id)
 
             chats.append(chat)
 
@@ -217,6 +217,35 @@ function onLoadChats() {
     select('.search-profile').addEventListener('click', function () {
         let el = select('.search-bar')
         el.style.display = el.style.display === 'flex' ? 'none' : 'flex'
+    })
+    select('.edit-profile').addEventListener('click', function(){
+        let edit_menu = select('.prof-edit')
+        edit_menu.style.display = edit_menu.style.display === 'block' ? 'none' : 'block'
+    })
+    select('.edit').addEventListener('click', function(){
+        let user_pass = select('input[name="edit-pass"]').value
+        let user_fam = select('input[name="edit-last-name"]').value
+        let user_name = select('input[name="edit-first-name"]').value
+        let user_otch = select('input[name="edit-fam-name"]').value
+        let user_photo = select('input[name="edit-photo"]').value
+
+        let xhr = new XMLHttpRequest()
+        xhr.open('PUT', `${host}/user/?pass=${user_pass}&fam=${user_fam}&name=${user_name}&otch=${user_otch}&photo_link=${user_photo}`)
+        xhr.setRequestHeader("Authorization", "Bearer " + bearer_token)
+        xhr.send()
+
+        xhr.onreadystatechange = function() {
+            if(xhr.readyState==4) {
+                response = JSON.parse(responseText)
+                console.log(response)
+
+
+            }
+        }
+    })
+    select('.cancel').addEventListener('click', function(){
+        let edit_menu = select('.prof-edit')
+        edit_menu.style.display = 'none'
     })
     select('.delete-profile').addEventListener('click', function () {
         let el = select('.delete-confirm')
@@ -305,6 +334,7 @@ function onLoadChats() {
                 console.log(response)
 
                 let message_area = select('.new-message-area')
+                message_area.innerHTML=''
                 for (i=0; i<response.length; i++) {
                     let element = response[i]
 

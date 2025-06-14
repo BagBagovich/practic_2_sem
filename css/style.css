@@ -141,6 +141,44 @@ body {
                     }
                 }
             }
+            & .prof-edit {
+                width: 250px;
+                position: absolute;
+                top: 40%;
+                left: 105%;
+                display: none;
+                background-color: #c8ed77;
+                padding: 5px 10px;
+                border-radius: 10px;
+                & input {
+                    width: 95%;
+                    font-size: 16px;
+                }
+                & .edit, .cancel {
+                    border: 0;
+                    border-radius: 5px;
+                    width: 45%;
+                    height: 30px;
+                    transition: background .1s linear, color .1s linear;
+                }
+                & .edit {
+                    background-color: #1cb338;
+                    &:hover {
+                        cursor: pointer;
+                        background-color: #167d29;
+                        color: #fff;
+                    }
+                }
+                & .cancel {
+                     background-color: #f03131;
+                    &:hover {
+                        cursor: pointer;
+                        background-color: #b31c1c;
+                        color: #fff;
+                    }
+                }
+                
+            }
             & .delete-profile {
                 position: relative;
                 padding: 3px 5px;
@@ -362,7 +400,7 @@ body {
         }
         & .new-message-area {
             width: 100%;
-            height: calc(100%-100px);
+            max-height: calc(100vh-100px);
             display: none;
         }
         & .message-area {
